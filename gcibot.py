@@ -61,12 +61,18 @@ class GCIBot(irc.IRCClient):
                 A['title'] = s.find('span', class_='title').string
                 A['status'] = s.find('span', class_='status').span.string
                 A['mentor'] = s.find('span', class_='mentor').span.string
-                A['hours'] = s.find('div', class_='time time-first')
-                if A['hours']:
-                    A['hours'] = A['hours'].span.string
-                    A['minutes'] = s.find_all('div', class_='time')[1].span.string
-                else:
-                    del A['hours']
+                clock = s.find('div', class_='stopwatch-time-c')
+                if clock:
+                    first = clock.find('div', class_='time-first')
+                    firstdigit = first.find('span', class_='number').string
+                    firstcaption = first.find('span', class_='cap').string
+                    second = clock.find_all('div', class_='time')[1]
+                    seconddigit = second.find('span', class_='number').string
+                    secondcaption = second.find('span', class_='cap').string
+                    A["firstdigit"] = firstdigit
+                    A["firstcaption"] = firstcaption
+                    A["seconddigit"] = seconddigit
+                    A["secondcaption"] = secondcaption
 
                 for _ in A.keys():
                     A[_] = str(A[_])  # IRC and Unicode don't mix very well, it seems.
@@ -74,8 +80,8 @@ class GCIBot(irc.IRCClient):
                 self.msg(channel, A['title'])
                 if 'hours' in A:
                     self.msg(channel, 'Status: ' + A['status'] +
-                        ' ({hours} hours, {minutes} minutes left)'.format(
-                            hours=A['hours'], minutes=A['minutes']))
+                        ' ({firstdigit} {firstcaption}, {seconddigit} {secondcaption} left)'.format(
+                            firstdigit=A["firstdigit"], firstcaption=A["firstcaption"], seconddigit=A["seconddigit"], secondcaption=A["secondcaption"]))
                 else:
                     self.msg(channel, 'Status: ' + A['status'])
                 self.msg(channel, 'Mentor(s): ' + A['mentor'])
