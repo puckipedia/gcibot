@@ -78,7 +78,7 @@ class GCIBot(irc.IRCClient):
                     A[_] = str(A[_])  # IRC and Unicode don't mix very well, it seems.
 
                 self.msg(channel, A['title'])
-                if 'hours' in A:
+                if 'firstdigit' in A:
                     self.msg(channel, 'Status: ' + A['status'] +
                         ' ({firstdigit} {firstcaption}, {seconddigit} {secondcaption} left)'.format(
                             firstdigit=A["firstdigit"], firstcaption=A["firstcaption"], seconddigit=A["seconddigit"], secondcaption=A["secondcaption"]))
